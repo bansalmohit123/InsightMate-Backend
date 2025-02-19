@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+
 }
 
 model User {
@@ -20,6 +21,7 @@ model User {
   password   String
   Document   Document[]
   URLDocument URLDocument[]
+  YoutubeVideo YouTubeVideo[]
 }
 
 model Document {
@@ -34,6 +36,16 @@ model URLDocument {
   id        String   @id @default(uuid())
   url       String   @unique
   content   String
+  embedding Bytes    // Store embedding as bytes
+  userId    String
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model YouTubeVideo {
+  id        String   @id @default(uuid())
+  url       String   @unique
+  title     String
+  transcript String
   embedding Bytes    // Store embedding as bytes
   userId    String
   User      User     @relation(fields: [userId], references: [id])

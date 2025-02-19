@@ -30,6 +30,7 @@
     "nodemon": "^3.1.9",
     "pdf-parse": "^1.1.1",
     "prisma": "^6.3.1",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "youtube-transcript": "^1.2.1"
   }
 }
