@@ -19,12 +19,22 @@ model User {
   email      String @unique
   password   String
   Document   Document[]
+  URLDocument URLDocument[]
 }
 
 model Document {
   id        Int      @id @default(autoincrement())
   content   String
   embedding Bytes  // Use Bytes to store vector data (manual encoding required)
+  userId    String
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model URLDocument {
+  id        String   @id @default(uuid())
+  url       String   @unique
+  content   String
+  embedding Bytes    // Store embedding as bytes
   userId    String
   User      User     @relation(fields: [userId], references: [id])
 }
