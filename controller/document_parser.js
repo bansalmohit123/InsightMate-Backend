@@ -93,17 +93,13 @@ async function extractText(file) {
 // **Upload Document Endpoint**
 const uploaddocument = async (req, res) => {
   try {
-    // Read file from memory or disk
-    // const fileBuffer = req.file?.buffer;
-    // const pdfData = await pdfParse(fileBuffer);
-    // const docText = pdfData.text;
+    
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
     // 📌 Extract text based on file type
     const docText = await extractText(req.file);
-
     // Generate Embedding Using GoogleGenerativeAIEmbeddings
     const [embeddingVector] = await embeddingModel.embedDocuments([docText]);
 
