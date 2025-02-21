@@ -64,17 +64,20 @@ async function saveYouTubeVideo(videoUrl, userId) {
 
 const uploadYouTubeVideo = async (req, res) => {
   try {
-    const { videoUrl, userId } = req.body;
+    const { videoUrl ,title,description} = req.body;
     if (!videoUrl) {
       return res.status(400).json({ error: "YouTube video URL is required" });
     }
-
+   const userId = "1234";
     // 🔹 Save the extracted transcript
     const savedVideo = await saveYouTubeVideo(videoUrl, userId);
 
     res.json({
       message: "YouTube transcript extracted and stored successfully",
-      videoId: savedVideo.id,
+      id: savedVideo.id,
+      title:title,
+      description:description,
+      youtubeurl: videoUrl,
     });
   } catch (error) {
     console.error("Error Processing YouTube Video:", error);

@@ -93,7 +93,7 @@ async function extractText(file) {
 // **Upload Document Endpoint**
 const uploaddocument = async (req, res) => {
   try {
-    
+    const {title , description,userId} = req.body;
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
@@ -104,12 +104,12 @@ const uploaddocument = async (req, res) => {
     const [embeddingVector] = await embeddingModel.embedDocuments([docText]);
 
     // Hardcoded User ID (replace this with actual authentication logic)
-    const userId = "1234";
+    // const userId = "1234";
 
     // Save Document with Embedding
     const docId = await saveDocument(docText, embeddingVector, userId);
     
-    res.json({ message: "Document uploaded and processed", documentId: docId });
+    res.json({ message: "Document uploaded and processed", documentId: docId ,title:title,description:description});
   } catch (error) {
     console.error("Error Uploading Document:", error);
     res.status(500).json({ error: "Error processing document" });

@@ -63,7 +63,7 @@ async function saveURLContent(url, userId) {
 
   const uploadURL = async (req, res) => {
     try {
-      const { url } = req.body;
+      const { url ,title,description} = req.body;
       if (!url) {
         return res.status(400).json({ error: "URL is required" });
       }
@@ -74,7 +74,10 @@ async function saveURLContent(url, userId) {
   
       res.json({
         message: "URL content extracted and stored successfully",
-        documentId: savedDocument.id,
+        id: savedDocument.id,
+        title:title,
+        description:description,
+        weburl: url,
       });
     } catch (error) {
       console.error("Error Processing URL:", error);
