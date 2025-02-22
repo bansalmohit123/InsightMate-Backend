@@ -26,6 +26,8 @@ model User {
 
 model Document {
   id        String   @id @default(uuid())
+  title     String
+  description String
   content   String
   embedding Bytes  // Use Bytes to store vector data (manual encoding required)
   userId    String
@@ -35,6 +37,8 @@ model Document {
 model URLDocument {
   id        String   @id @default(uuid())
   url       String   @unique
+  title     String
+  description String
   content   String
   embedding Bytes    // Store embedding as bytes
   userId    String
@@ -44,6 +48,7 @@ model URLDocument {
 model YouTubeVideo {
   id        String   @id @default(uuid())
   url       String   @unique
+  description String
   title     String
   transcript String
   embedding Bytes    // Store embedding as bytes

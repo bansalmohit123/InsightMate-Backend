@@ -38,7 +38,7 @@ async function extractYouTubeTranscript(videoUrl) {
 }
 
 // **Function to Save YouTube Video Transcript in Database**
-async function saveYouTubeVideo(videoUrl, userId) {
+async function saveYouTubeVideo(videoUrl, userId,title,description) {
   // 🔹 Extract transcript from YouTube
   const transcript = await extractYouTubeTranscript(videoUrl);
 
@@ -51,9 +51,9 @@ async function saveYouTubeVideo(videoUrl, userId) {
       url: videoUrl,
       transcript,
       embedding: vectorToBytes(embeddingVector),
-      title: "YouTube Video", // Default title for now
+      title: title, 
+      description: description,
       User: {
-        // Note the capital "U" matching the field name in the schema
         connect: { id: userId },
       },
     },
@@ -64,13 +64,12 @@ async function saveYouTubeVideo(videoUrl, userId) {
 
 const uploadYouTubeVideo = async (req, res) => {
   try {
-    const { videoUrl ,title,description} = req.body;
+    const { videoUrl ,title,description,userId} = req.body;
     if (!videoUrl) {
       return res.status(400).json({ error: "YouTube video URL is required" });
     }
-   const userId = "1234";
     // 🔹 Save the extracted transcript
-    const savedVideo = await saveYouTubeVideo(videoUrl, userId);
+    const savedVideo = await saveYouTubeVideo(videoUrl, userId,title,description);
 
     res.json({
       message: "YouTube transcript extracted and stored successfully",

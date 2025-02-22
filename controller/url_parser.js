@@ -39,7 +39,7 @@ async function extractTextFromURL(url) {
   }
 
 // **Function to Save Extracted Content in Database**
-async function saveURLContent(url, userId) {
+async function saveURLContent(url, userId,title,description) {
     // 🔹 Extract text from the webpage
     const content = await extractTextFromURL(url);
   
@@ -52,6 +52,8 @@ async function saveURLContent(url, userId) {
         url,
         content,
         embedding: vectorToBytes(embeddingVector),
+        title: title,
+        description: description,
         User: { // Note the capital "U" matching the field name in the schema
             connect: { id: userId },
           },
@@ -63,14 +65,14 @@ async function saveURLContent(url, userId) {
 
   const uploadURL = async (req, res) => {
     try {
-      const { url ,title,description} = req.body;
+      const { url ,title,description,userId} = req.body;
       if (!url) {
         return res.status(400).json({ error: "URL is required" });
       }
   
       // 🔹 Save the extracted content
-      const userId = "1234";
-      const savedDocument = await saveURLContent(url,userId);
+      
+      const savedDocument = await saveURLContent(url,userId,title,description);
   
       res.json({
         message: "URL content extracted and stored successfully",

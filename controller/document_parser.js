@@ -23,11 +23,13 @@ const vectorToBytes = (vector) => Buffer.from(new Float32Array(vector).buffer);
 const bytesToVector = (bytes) => Array.from(new Float32Array(bytes));
 
 // **Function to Save Document and Embedding**
-async function saveDocument(docText, embeddingVector, userId) {
+async function saveDocument(docText, embeddingVector, userId,title,description) {
   const doc = await prisma.document.create({
     data: {
       content: docText,
       embedding: vectorToBytes(embeddingVector), // Store as bytes for Prisma
+      title: title,
+      description: description,
       // userId: userId, // Prisma requires direct foreign key, not relation object
           User: { // Note the capital "U" matching the field name in the schema
         connect: { id: userId },
@@ -107,7 +109,7 @@ const uploaddocument = async (req, res) => {
     // const userId = "1234";
 
     // Save Document with Embedding
-    const docId = await saveDocument(docText, embeddingVector, userId);
+    const docId = await saveDocument(docText, embeddingVector, userId,title,description);
     
     res.json({ message: "Document uploaded and processed", documentId: docId ,title:title,description:description});
   } catch (error) {
@@ -219,6 +221,21 @@ const query = async (req, res) => {
   } catch (error) {
     console.error("Error Processing Query:", error);
     res.status(500).json({ error: "Error processing query" });
+  }
+};
+  
+
+const getallDocuments = async (req, res) => {
+  try {
+    const userId = req.body;
+    const documents = await prisma.document.findMany({
+      where: { userId: userId },
+      select: { id: true, content: true },
+    });
+    res.json(documents);
+  } catch (error) {
+    console.error("Error Retrieving Documents:", error);
+    res.status(500).json({ error: "Error retrieving documents" });
   }
 };
 

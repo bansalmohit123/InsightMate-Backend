@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const documentRoutes = require("./routes/document");
 const urlRoutes = require("./routes/url");
 const youtubeRoutes = require("./routes/youtube");
+const getRoutes = require("./routes/getData");
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/document", documentRoutes);
 app.use("/api/url", urlRoutes);
 app.use("/api/youtube", youtubeRoutes);
+app.use("/api/get", getRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
