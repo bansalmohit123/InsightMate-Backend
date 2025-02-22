@@ -180,6 +180,7 @@ async function callGeminiAPI(prompt) {
 // **Query Endpoint: Retrieves Documents & Calls Gemini API**
 const query = async (req, res) => {
   try {
+    console.log("Query Request:", req.body);
     const { question, documentId } = req.body;
     if (!question) {
       return res.status(400).json({ error: "Question is required" });
