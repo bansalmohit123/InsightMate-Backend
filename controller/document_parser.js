@@ -122,7 +122,7 @@ const uploaddocument = async (req, res) => {
       data: { sessionID: newSession.id },
     });
     
-    res.json({ message: "Document uploaded and processed", documentId: docId ,title:title,description:description,sessionId:newSession.id});
+    res.json({ message: "Document uploaded and processed", documentId: docId ,title:title,description:description,sessionID:newSession.id});
   } catch (error) {
     console.error("Error Uploading Document:", error);
     res.status(500).json({ error: "Error processing document" });

@@ -18,6 +18,7 @@ const getoption = async (req, res) => {
                 where: { userId: userId },
                 select: { title: true, description: true,id:true,sessionID:true },
             });
+            console.log(documents);
             res.json(documents);
         } else {
             const documents = await prisma.youTubeVideo.findMany({

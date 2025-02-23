@@ -91,7 +91,7 @@ const uploadYouTubeVideo = async (req, res) => {
       title:title,
       description:description,
       youtubeurl: videoUrl,
-      sessionId:newSession.id
+      sessionID:newSession.id
     });
   } catch (error) {
     console.error("Error Processing YouTube Video:", error);
@@ -136,11 +136,19 @@ async function callGeminiAPI(prompt) {
     console.log("Sending request to Gemini API...");
 
     // Select the Gemini model (use "gemini-pro" for text-based queries)
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Send the prompt to Gemini
     console.log("Prompt:", prompt);
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      safetySettings: [
+        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_ONLY_HIGH" },
+        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_ONLY_HIGH" },
+        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_ONLY_HIGH" },
+      ],
+    });
+    
     const response = await result.response;
     const text = response.text();
 

@@ -25,8 +25,8 @@ async function extractTextFromURL(url) {
       // 🔹 Load HTML into Cheerio
       const $ = cheerio.load(data);
   
-      // 🔹 Extract text from paragraphs
-      let content = $("p")
+      // 🔹 Extract text from paragraphs, headings, and other text-containing elements
+      let content = $("p, h1, h2, h3, h4, h5, h6, span, div")
         .map((i, el) => $(el).text())
         .get()
         .join("\n");
@@ -94,7 +94,7 @@ async function saveURLContent(url, userId,title,description) {
         title:title,
         description:description,
         weburl: url,
-        sessionId:newSession.id
+        sessionID:newSession.id
       });
     } catch (error) {
       console.error("Error Processing URL:", error);
@@ -141,7 +141,7 @@ async function callGeminiAPI(prompt) {
       console.log("Sending request to Gemini API...");
   
       // Select the Gemini model (use "gemini-pro" for text-based queries)
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   
       // Send the prompt to Gemini
       const result = await model.generateContent(prompt);
