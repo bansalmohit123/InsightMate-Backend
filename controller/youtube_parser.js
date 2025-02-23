@@ -65,18 +65,33 @@ async function saveYouTubeVideo(videoUrl, userId,title,description) {
 const uploadYouTubeVideo = async (req, res) => {
   try {
     const { videoUrl ,title,description,userId} = req.body;
+    console.log(req.body);
     if (!videoUrl) {
       return res.status(400).json({ error: "YouTube video URL is required" });
     }
     // 🔹 Save the extracted transcript
     const savedVideo = await saveYouTubeVideo(videoUrl, userId,title,description);
+    chatbotType = "YouTube Chatbot";
+    const newSession = await prisma.chatbotSession.create({
+      data: {
+        userId,
+        chatbotType,
+        title,
+        description,
+      },
+    });
 
+    await prisma.youTubeVideo.update({
+      where: { id: savedVideo.id },
+      data: { sessionID: newSession.id },
+    });
     res.json({
       message: "YouTube transcript extracted and stored successfully",
       id: savedVideo.id,
       title:title,
       description:description,
       youtubeurl: videoUrl,
+      sessionId:newSession.id
     });
   } catch (error) {
     console.error("Error Processing YouTube Video:", error);

@@ -22,6 +22,7 @@ model User {
   Document   Document[]
   URLDocument URLDocument[]
   YoutubeVideo YouTubeVideo[]
+  ChatbotSession ChatbotSession[]
 }
 
 model Document {
@@ -31,6 +32,7 @@ model Document {
   content   String
   embedding Bytes  // Use Bytes to store vector data (manual encoding required)
   userId    String
+  sessionID String?
   User      User     @relation(fields: [userId], references: [id])
 }
 
@@ -42,6 +44,7 @@ model URLDocument {
   content   String
   embedding Bytes    // Store embedding as bytes
   userId    String
+  sessionID String?
   User      User     @relation(fields: [userId], references: [id])
 }
 
@@ -53,5 +56,28 @@ model YouTubeVideo {
   transcript String
   embedding Bytes    // Store embedding as bytes
   userId    String
+  sessionID String?  // Optional session ID
   User      User     @relation(fields: [userId], references: [id])
+}
+
+model ChatbotSession {
+  id          String  @id @default(uuid()) // Unique Session ID
+  userId      String  // ID of the user who created the session
+  chatbotType String  // "Document", "Webpage", "YouTube"
+  title       String  // Title of the chatbot session
+  description String? // Optional session description
+  createdAt   DateTime @default(now()) // Timestamp when session was created
+
+  messages    ChatMessage[] // Relation to chat messages
+  User        User         @relation(fields: [userId], references: [id])
+}
+
+model ChatMessage {
+  id          String  @id @default(uuid()) // Unique ID for each message
+  sessionId   String  // Links message to a chatbot session
+  sender      String  // "user" or "bot"
+  message     String  // Chat message content
+  timestamp   DateTime @default(now()) // Message timestamp
+
+  ChatbotSession ChatbotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }

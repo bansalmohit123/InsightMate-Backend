@@ -10,19 +10,19 @@ const getoption = async (req, res) => {
         if (option == 'Document Chatbot') {
             const documents = await prisma.document.findMany({
                 where: { userId: userId },
-                select: { title: true, description: true,id:true },
+                select: { title: true, description: true,id:true ,sessionID:true},
             });
             res.json(documents);
         } else if (option == 'Webpage Extraction Chatbot') {
             const documents = await prisma.uRLDocument.findMany({
                 where: { userId: userId },
-                select: { title: true, description: true,id:true },
+                select: { title: true, description: true,id:true,sessionID:true },
             });
             res.json(documents);
         } else {
             const documents = await prisma.youTubeVideo.findMany({
                 where: { userId: userId },
-                select: { title: true, description: true,id:true },
+                select: { title: true, description: true,id:true,sessionID:true },
             });
             res.json(documents);
         }

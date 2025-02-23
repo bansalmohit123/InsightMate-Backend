@@ -73,6 +73,20 @@ async function saveURLContent(url, userId,title,description) {
       // 🔹 Save the extracted content
       
       const savedDocument = await saveURLContent(url,userId,title,description);
+      chatbotType = "Webpage Extraction Chatbot";
+      const newSession = await prisma.chatbotSession.create({
+        data: {
+          userId,
+          chatbotType,
+          title,
+          description,
+        },
+      });
+
+      await prisma.uRLDocument.update({
+        where: { id: savedDocument.id },
+        data: { sessionID: newSession.id },
+      });
   
       res.json({
         message: "URL content extracted and stored successfully",
@@ -80,6 +94,7 @@ async function saveURLContent(url, userId,title,description) {
         title:title,
         description:description,
         weburl: url,
+        sessionId:newSession.id
       });
     } catch (error) {
       console.error("Error Processing URL:", error);

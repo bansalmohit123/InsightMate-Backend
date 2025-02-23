@@ -105,13 +105,24 @@ const uploaddocument = async (req, res) => {
     // Generate Embedding Using GoogleGenerativeAIEmbeddings
     const [embeddingVector] = await embeddingModel.embedDocuments([docText]);
 
-    // Hardcoded User ID (replace this with actual authentication logic)
-    // const userId = "1234";
-
     // Save Document with Embedding
     const docId = await saveDocument(docText, embeddingVector, userId,title,description);
+
+    chatbotType = "Document Chatbot";
+    const newSession = await prisma.chatbotSession.create({
+      data: {
+        userId,
+        chatbotType,
+        title,
+        description,
+      },
+    });
+    await prisma.document.update({
+      where: { id: docId },
+      data: { sessionID: newSession.id },
+    });
     
-    res.json({ message: "Document uploaded and processed", documentId: docId ,title:title,description:description});
+    res.json({ message: "Document uploaded and processed", documentId: docId ,title:title,description:description,sessionId:newSession.id});
   } catch (error) {
     console.error("Error Uploading Document:", error);
     res.status(500).json({ error: "Error processing document" });
