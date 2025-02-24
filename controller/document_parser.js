@@ -169,7 +169,7 @@ async function callGeminiAPI(prompt) {
     console.log("Sending request to Gemini API...");
 
     // Select the Gemini model (use "gemini-pro" for text-based queries)
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Send the prompt to Gemini
     const result = await model.generateContent(prompt);
