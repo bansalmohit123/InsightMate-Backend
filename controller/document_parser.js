@@ -4,25 +4,26 @@ const csvParser = require("csv-parser");
 const mammoth = require("mammoth");
 const xlsx = require("xlsx");
 const fs = require("fs");
+const textract = require("textract");
 const fetch = require("node-fetch"); // For Gemini API calls
 const { GoogleGenerativeAIEmbeddings } = require("@langchain/google-genai");
 const prisma = require("../config/db");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 require("dotenv").config();
 
-// Initialize GoogleGenerativeAIEmbeddings
+
 const embeddingModel = new GoogleGenerativeAIEmbeddings({
   model: "models/embedding-001",
   apiKey: process.env.GEMINI_API_KEY, // Ensure this is set in .env
 });
-// Initialize Gemini API with your API key
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// **Helper Functions: Convert Embeddings for Prisma Storage**
+
 const vectorToBytes = (vector) => Buffer.from(new Float32Array(vector).buffer);
 const bytesToVector = (bytes) => Array.from(new Float32Array(bytes));
 
-// **Function to Save Document and Embedding**
+
 async function saveDocument(docText, embeddingVector, userId,title,description) {
   const doc = await prisma.document.create({
     data: {
@@ -30,7 +31,6 @@ async function saveDocument(docText, embeddingVector, userId,title,description) 
       embedding: vectorToBytes(embeddingVector), // Store as bytes for Prisma
       title: title,
       description: description,
-      // userId: userId, // Prisma requires direct foreign key, not relation object
           User: { // Note the capital "U" matching the field name in the schema
         connect: { id: userId },
       },
@@ -38,9 +38,11 @@ async function saveDocument(docText, embeddingVector, userId,title,description) 
   });
   return doc.id;
 }
-// **Function to Extract Text from Different File Types**
+
 async function extractText(file) {
   const fileType = file.mimetype;
+  console.log("File Name:", file.originalname);
+  console.log("File Type:", fileType);
 
   if (fileType === "application/pdf") {
     // 📄 Extract text from PDF
@@ -70,7 +72,21 @@ async function extractText(file) {
     // 📄 Extract text from DOCX
     const result = await mammoth.extractRawText({ buffer: file.buffer });
     return result.value;
-  }
+    }
+
+
+if (fileType === "application/doc") {
+  const text = await new Promise((resolve, reject) => {
+    textract.fromBufferWithName(`${file.originalname}.doc`, file.buffer, (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
+  });
+  return text;
+}
+
+  
+  
 
   if (fileType === "text/plain") {
     // 📜 Extract text from TXT
@@ -92,7 +108,7 @@ async function extractText(file) {
   }
   throw new Error("Unsupported file type");
 }
-// **Upload Document Endpoint**
+
 const uploaddocument = async (req, res) => {
   try {
     const {title , description,userId} = req.body;
@@ -100,7 +116,6 @@ const uploaddocument = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    // 📌 Extract text based on file type
     const docText = await extractText(req.file);
     // Generate Embedding Using GoogleGenerativeAIEmbeddings
     const [embeddingVector] = await embeddingModel.embedDocuments([docText]);
@@ -168,7 +183,6 @@ async function callGeminiAPI(prompt) {
   try {
     console.log("Sending request to Gemini API...");
 
-    // Select the Gemini model (use "gemini-pro" for text-based queries)
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Send the prompt to Gemini
@@ -188,7 +202,6 @@ async function callGeminiAPI(prompt) {
   }
 }
 
-// **Query Endpoint: Retrieves Documents & Calls Gemini API**
 const query = async (req, res) => {
   try {
     console.log("Query Request:", req.body);

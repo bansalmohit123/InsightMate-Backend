@@ -1,0 +1,16 @@
+org: bt22cse200
+service: InsightMate
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+
+
+functions:
+  api:
+    handler: dist/index.handler
+    events:
+      - cors : true
+      - httpApi: "*"
