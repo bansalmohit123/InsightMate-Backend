@@ -2,8 +2,8 @@ const express = require("express");
 const http = require("http");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const serverless = require("serverless-http");
 const bodyParser = require('body-parser');
-const serverless = require('serverless-http');
 const authRoutes = require("./routes/authRoutes");
 const documentRoutes = require("./routes/document");
 const urlRoutes = require("./routes/url");
@@ -25,9 +25,13 @@ app.use("/api/url", urlRoutes);
 app.use("/api/youtube", youtubeRoutes);
 app.use("/api/get", getRoutes);
 app.use("/api/chat", chatRouter);
-app.get('/', (req, res) => {
-    res.send('Hello, world!');
-});
+app.get("/", (req, res, next) => {
+    return res.status(200).json({
+      message: "Hello from root!",
+    });
+  });
+  
 const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-module.exports.handler= serverless(app);
+
+module.exports.handler = serverless(app);

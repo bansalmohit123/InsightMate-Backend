@@ -1,16 +1,39 @@
-org: bt22cse200
-service: InsightMate
-
-frameworkVersion: '4'
+org: mohit27
+service: aws-nodejs
 
 provider:
   name: aws
   runtime: nodejs20.x
+  memorySize: 2048
+  stage: dev
+  environment:
+    DATABASE_URL: postgres://neondb_owner:npg_C5jdalome4LY@ep-broad-hall-a1csij5k-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+    JWT_SECRET: your_secret_keyyyyyyyy   
+    GEMINI_API_KEY: AIzaSyBFGa5vkv6eaCDgPXzQ8-Aa-eLMBpJ3s5c
+
+
+plugins:
+  - serverless-webpack
+build:
+  esbuild: false
+package:
+  individually: true  # Reduce file size
+  include:
+    - test/data/05-versions-space.pdf
+
 
 
 functions:
   api:
-    handler: dist/index.handler
+    handler: index.handler
     events:
-      - cors : true
-      - httpApi: "*"
+      - httpApi:
+          path: "/{proxy+}"
+          method: ANY
+          
+
+# package:
+#   exclude:
+#     - node_modules/**
+#     - venv/**
+
