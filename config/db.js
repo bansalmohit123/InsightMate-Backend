@@ -1,5 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
-
+const dotenv = require("dotenv");
+dotenv.config();
+console.log(process.env.DATABASE_URL);
 const prisma = new PrismaClient({
   log: ['query', 'info', 'warn', 'error'],
   datasources: {
