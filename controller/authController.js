@@ -21,16 +21,17 @@ const signup = async (req, res) => {
     // Create new user
     const newUser = await prisma.user.create({
       data: {
-        username,
-        email,
+        username:username,
+        email:email,
         password:hashedPassword,
       },
     });
 
     res.status(200).json({ message: "User created successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error creating user", error });
-  }
+  console.error("Error creating user:", error);  // Show full error
+  res.status(500).json({ message: "Error creating user", error: error.message || error });
+}
 };
 
 const login = async (req, res) => {
