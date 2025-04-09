@@ -15,7 +15,7 @@ const app = express();
 
 // CORS setup
 app.use(cors({
-    origin: ['http://mohittt.me', 'https://mohittt.me'],
+    origin: ['http://mohittt.me', 'https://mohittt.me','https://insight.mohittt.me'],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
