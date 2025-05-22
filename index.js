@@ -13,12 +13,13 @@ dotenv.config();
 
 const app = express();
 
+app.use(cors());
 // CORS setup
-app.use(cors({
-    origin: ['http://mohittt.me', 'https://mohittt.me','https://insight.mohittt.me'],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
+// app.use(cors({
+//     origin: ['http://mohittt.me', 'https://mohittt.me','https://insight.mohittt.me','http://localhost:60037/'],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true
+// }));
 
 // Body parsers
 app.use(express.json()); // handles JSON
